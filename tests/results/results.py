@@ -21,7 +21,7 @@ class TestGetResults(unittest.TestCase):
         mock_get_data.return_value.json.return_value = mock_data
         mock_get_data.return_value.status_code = 200
 
-        response = requests.get("https://fake.api/results")
+        response = requests.get("/results")
         body = response.json()
         self.assertEqual(body,mock_data)
 
