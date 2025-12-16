@@ -156,3 +156,86 @@ class TestResultsEndpoints(unittest.TestCase):
 
         assert response is not None
         assert response.status_code == 200
+
+    # ========= SAD PATHS – RESULTS =========
+
+    # GET /results – error interno
+    @patch('requests.get')
+    def test_get_results_server_error(self, mock_get):
+        mock_get.return_value = Mock(status_code=500)
+
+        response = requests.get("/results")
+
+        assert response is not None
+        assert response.status_code == 500
+
+    # GET /results/:result_number – resultado inexistente
+    @patch('requests.get')
+    def test_get_result_not_found(self, mock_get):
+        mock_get.return_value = Mock(status_code=404)
+
+        response = requests.get("/results/999")
+
+        assert response is not None
+        assert response.status_code == 404
+
+    # POST /results – body inválido
+    @patch('requests.post')
+    def test_post_results_bad_request(self, mock_post):
+        mock_post.return_value = Mock(status_code=400)
+
+        response = requests.post("/results", json={})
+
+        assert response is not None
+        assert response.status_code == 400
+
+    # POST /results – conflicto por duplicado
+    @patch('requests.post')
+    def test_post_results_conflict(self, mock_post):
+        mock_post.return_value = Mock(status_code=409)
+
+        response = requests.post("/results", json={})
+
+        assert response is not None
+        assert response.status_code == 409
+
+    # PATCH /results/:result_number – resultado inexistente
+    @patch('requests.patch')
+    def test_patch_result_not_found(self, mock_patch):
+        mock_patch.return_value = Mock(status_code=404)
+
+        response = requests.patch("/results/999", json={"result": "string"})
+
+        assert response is not None
+        assert response.status_code == 404
+
+    # PATCH /results/:result_number – body inválido
+    @patch('requests.patch')
+    def test_patch_result_bad_request(self, mock_patch):
+        mock_patch.return_value = Mock(status_code=400)
+
+        response = requests.patch("/results/1", json={})
+
+        assert response is not None
+        assert response.status_code == 400
+
+    # DELETE /results/:result_number – resultado inexistente
+    @patch('requests.delete')
+    def test_delete_result_not_found(self, mock_delete):
+        mock_delete.return_value = Mock(status_code=404)
+
+        response = requests.delete("/results/999")
+
+        assert response is not None
+        assert response.status_code == 404
+
+    # DELETE /results/:result_number – error interno
+    @patch('requests.delete')
+    def test_delete_result_server_error(self, mock_delete):
+        mock_delete.return_value = Mock(status_code=500)
+
+        response = requests.delete("/results/1")
+
+        assert response is not None
+        assert response.status_code == 500
+
