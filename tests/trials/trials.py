@@ -155,3 +155,65 @@ class TestTrialsEndpoints(unittest.TestCase):
 
         assert response is not None
         assert response.status_code == 200
+
+    # ========= SAD PATHS – TRIALS =========
+
+    # GET /trials – error interno
+    @patch("requests.get")
+    def test_get_trials_server_error(self, mock_get):
+        mock_get.return_value = Mock(status_code=500)
+
+        response = requests.get("/trials")
+
+        assert response is not None
+        assert response.status_code == 500
+
+    # POST /trials – body inválido
+    @patch("requests.post")
+    def test_post_trial_bad_request(self, mock_post):
+        mock_post.return_value = Mock(status_code=400)
+
+        response = requests.post("/trials", json={})
+
+        assert response is not None
+        assert response.status_code == 400
+
+    # POST /trials – conflicto (relaciones inexistentes)
+    @patch("requests.post")
+    def test_post_trial_conflict(self, mock_post):
+        mock_post.return_value = Mock(status_code=409)
+
+        response = requests.post("/trials", json={})
+
+        assert response is not None
+        assert response.status_code == 409
+
+    # GET /trials/:trial_number – no encontrado
+    @patch("requests.get")
+    def test_get_trial_not_found(self, mock_get):
+        mock_get.return_value = Mock(status_code=404)
+
+        response = requests.get("/trials/999")
+
+        assert response is not None
+        assert response.status_code == 404
+
+    # PATCH /trials/:trial_number – body inválido
+    @patch("requests.patch")
+    def test_patch_trial_bad_request(self, mock_patch):
+        mock_patch.return_value = Mock(status_code=400)
+
+        response = requests.patch("/trials/1", json={})
+
+        assert response is not None
+        assert response.status_code == 400
+
+    # DELETE /trials/:trial_number – no encontrado
+    @patch("requests.delete")
+    def test_delete_trial_not_found(self, mock_delete):
+        mock_delete.return_value = Mock(status_code=404)
+
+        response = requests.delete("/trials/999")
+
+        assert response is not None
+        assert response.status_code == 404

@@ -1,4 +1,0 @@
-NOTAS DE EJECUCION:
-
-Al menos yo en linux lo corro desde test/ y hago: python -m unittest discover -s . -p "test*.py" -t .. -v
--> Eso corre todos los files unittest que empiecen por "test...", por ejemplo clients/test_clients.py.

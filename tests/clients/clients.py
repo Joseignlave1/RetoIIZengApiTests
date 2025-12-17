@@ -86,6 +86,48 @@ class TestClients(unittest.TestCase):
         assert response is not None
         assert response.status_code == 200
 
+    # ========= SAD PATHS – CLIENTS =========
+
+    # GET /clients – error interno
+    @patch("requests.get")
+    def test_get_clients_server_error(self, mock_get):
+        mock_get.return_value = Mock(status_code=500)
+
+        response = requests.get("/clients")
+
+        assert response is not None
+        assert response.status_code == 500
+
+    # POST /clients – body inválido
+    @patch("requests.post")
+    def test_post_clients_bad_request(self, mock_post):
+        mock_post.return_value = Mock(status_code=400)
+
+        response = requests.post("/clients", json={})
+
+        assert response is not None
+        assert response.status_code == 400
+
+    # POST /clients – conflicto (cliente duplicado)
+    @patch("requests.post")
+    def test_post_clients_conflict(self, mock_post):
+        mock_post.return_value = Mock(status_code=409)
+
+        response = requests.post("/clients", json={})
+
+        assert response is not None
+        assert response.status_code == 409
+
+    # GET /client/:client_code – cliente inexistente
+    @patch("requests.get")
+    def test_get_client_by_code_not_found(self, mock_get):
+        mock_get.return_value = Mock(status_code=404)
+
+        response = requests.get("/client/C-999")
+
+        assert response is not None
+        assert response.status_code == 404
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -169,3 +169,64 @@ class TestUsersEndpoints(unittest.TestCase):
 
         assert response is not None
         assert response.status_code == 200
+
+
+    # GET /users – error interno
+    @patch("requests.get")
+    def test_get_users_server_error(self, mock_get):
+        mock_get.return_value = Mock(status_code=500)
+
+        response = requests.get("/users")
+
+        assert response is not None
+        assert response.status_code == 500
+
+    # POST /users – body inválido
+    @patch("requests.post")
+    def test_post_user_bad_request(self, mock_post):
+        mock_post.return_value = Mock(status_code=400)
+
+        response = requests.post("/users", json={})
+
+        assert response is not None
+        assert response.status_code == 400
+
+    # POST /users – username duplicado
+    @patch("requests.post")
+    def test_post_user_conflict(self, mock_post):
+        mock_post.return_value = Mock(status_code=409)
+
+        response = requests.post("/users", json={})
+
+        assert response is not None
+        assert response.status_code == 409
+
+    # GET /users/:id – usuario inexistente
+    @patch("requests.get")
+    def test_get_user_not_found(self, mock_get):
+        mock_get.return_value = Mock(status_code=404)
+
+        response = requests.get("/users/999")
+
+        assert response is not None
+        assert response.status_code == 404
+
+    # PATCH /users/:id – body inválido
+    @patch("requests.patch")
+    def test_patch_user_bad_request(self, mock_patch):
+        mock_patch.return_value = Mock(status_code=400)
+
+        response = requests.patch("/users/1", json={})
+
+        assert response is not None
+        assert response.status_code == 400
+
+    # DELETE /users/:id – usuario inexistente
+    @patch("requests.delete")
+    def test_delete_user_not_found(self, mock_delete):
+        mock_delete.return_value = Mock(status_code=404)
+
+        response = requests.delete("/users/999")
+
+        assert response is not None
+        assert response.status_code == 404

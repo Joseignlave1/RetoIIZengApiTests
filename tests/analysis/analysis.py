@@ -88,7 +88,49 @@ class TestAnalysis(unittest.TestCase):
         assert response is not None
         assert response.status_code == 200
 
+    # POST /analysis – body inválido
+    @patch("requests.post")
+    def test_post_analysis_bad_request(self, mock_post):
+        mock_post.return_value = Mock(status_code=400)
 
-if __name__ == "__main__":
-    unittest.main()
+        response = requests.post("/analysis", json={})
 
+        assert response is not None
+        assert response.status_code == 400
+
+
+    # POST /analysis – conflicto (por ejemplo muestra inexistente o duplicado)
+    @patch("requests.post")
+    def test_post_analysis_conflict(self, mock_post):
+        mock_post.return_value = Mock(status_code=409)
+
+        response = requests.post("/analysis", json={})
+
+        assert response is not None
+        assert response.status_code == 409
+
+
+    # GET /analysis – error interno
+    @patch("requests.get")
+    def test_get_analysis_server_error(self, mock_get):
+        mock_get.return_value = Mock(status_code=500)
+
+        response = requests.get("/analysis")
+
+        assert response is not None
+        assert response.status_code == 500
+
+
+    # GET /analysis/:analysis_number – no encontrado
+    @patch("requests.get")
+    def test_get_analysis_by_number_not_found(self, mock_get):
+        mock_get.return_value = Mock(status_code=404)
+
+        response = requests.get("/analysis/999")
+
+        assert response is not None
+        assert response.status_code == 404
+
+
+    if __name__ == "__main__":
+        unittest.main()

@@ -3,8 +3,9 @@ from unittest.mock import patch, Mock
 
 import requests
 
-class TestLogin(unittest.TestCase):
+LOGIN_URL = "/login"
 
+class TestLogin(unittest.TestCase):
     @patch("requests.post")
     def test_login_ok(self, mock_post):
         mock_data = {
@@ -24,7 +25,7 @@ class TestLogin(unittest.TestCase):
         mock_post.return_value.status_code = 200
 
         response = requests.post(
-            "/login",
+            LOGIN_URL,
             json={"username": "string", "password": "string"}
         )
         body = response.json()
@@ -33,6 +34,18 @@ class TestLogin(unittest.TestCase):
         assert response is not None
         assert response.status_code == 200
 
+    @patch("requests.post")
+    def test_login_fail(self, mock_post):
+
+        mock_post.return_value = Mock()
+        mock_post.return_value.status_code = 404
+
+        response = requests.post(
+            LOGIN_URL,
+            json={"username": "string", "password": "string"}
+        )
+        assert response is not None
+        assert response.status_code == 404
 
 if __name__ == "__main__":
     unittest.main()

@@ -152,3 +152,65 @@ class TestSamplesEndpoints(unittest.TestCase):
 
         assert response is not None
         assert response.status_code == 200
+
+    # ========= SAD PATHS – SAMPLES =========
+
+    # POST /samples – body inválido
+    @patch("requests.post")
+    def test_post_sample_bad_request(self, mock_post):
+        mock_post.return_value = Mock(status_code=400)
+
+        response = requests.post("/samples", json={})
+
+        assert response is not None
+        assert response.status_code == 400
+
+    # POST /samples – conflicto (por ejemplo cliente inexistente o duplicado)
+    @patch("requests.post")
+    def test_post_sample_conflict(self, mock_post):
+        mock_post.return_value = Mock(status_code=409)
+
+        response = requests.post("/samples", json={})
+
+        assert response is not None
+        assert response.status_code == 409
+
+    # GET /samples – error interno
+    @patch("requests.get")
+    def test_get_samples_server_error(self, mock_get):
+        mock_get.return_value = Mock(status_code=500)
+
+        response = requests.get("/samples")
+
+        assert response is not None
+        assert response.status_code == 500
+
+    # GET /samples/:sample_number – no encontrado
+    @patch("requests.get")
+    def test_get_sample_not_found(self, mock_get):
+        mock_get.return_value = Mock(status_code=404)
+
+        response = requests.get("/samples/999")
+
+        assert response is not None
+        assert response.status_code == 404
+
+    # PATCH /samples/:sample_number – body inválido
+    @patch("requests.patch")
+    def test_patch_sample_bad_request(self, mock_patch):
+        mock_patch.return_value = Mock(status_code=400)
+
+        response = requests.patch("/samples/1", json={})
+
+        assert response is not None
+        assert response.status_code == 400
+
+    # DELETE /samples/:sample_number – no encontrado
+    @patch("requests.delete")
+    def test_delete_sample_not_found(self, mock_delete):
+        mock_delete.return_value = Mock(status_code=404)
+
+        response = requests.delete("/samples/999")
+
+        assert response is not None
+        assert response.status_code == 404
