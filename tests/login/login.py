@@ -17,6 +17,15 @@ class TestLogin(unittest.TestCase):
                     "name": "Admin",
                     "roles": ["Role"]
                 }
+            },
+            "data": {
+                "access_token": "jwt",
+                "expires_in": 3600,
+                "user": {
+                    "id": 1,
+                    "name": "Admin",
+                    "roles": ["Role"]
+                }
             }
         }
 
